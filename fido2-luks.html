@@ -1,0 +1,33 @@
+
+<main role="main">
+  <h1>Unlock encrypted root with FIDO2 key</h1>
+
+  <section>
+    <h2>Target<h2>
+
+    The target of this setup is to have encrypted root partition...
+  </section>
+
+  <section>
+    <h2>Preconditions</h2>
+
+    Clean install of Manjaro on a supported hardware encrypted.
+  </h2>
+
+  <section>
+    <h2>Procedure</h2>
+
+    <p>Begin with...</p>
+    <pre><code>cryptsetup convert /dev/... --type=luks2</code></pre>
+    <pre><code>systemd-cryptenroll --fido2-device=auto /dev/...</code></pre>
+    <p>udev => systemd initrd, přepsat crypto</p>
+    <pre><code>rd.luks.option</code></pre>
+  </section>
+
+  <section>
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://bbs.archlinux.org/viewtopic.php?id=265134">https://bbs.archlinux.org/viewtopic.php?id=265134</a> - Arch Linux forum describing unlocking root system with FIDO2 key</li>
+    </ul>
+  </section>
+</main>
