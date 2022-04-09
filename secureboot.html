@@ -1,0 +1,66 @@
+
+<main role="main">
+  <h1>Custom Secure Boot on Manjaro</h1>
+
+  <section>
+    <h2>Target<h2>
+
+    The target of this setup is to have working secure boot on the Manjaro installation with custom keys in EFI (replacing the original Micro$oft keys).
+  </section>
+
+  <section>
+    <h2>Preconditions</h2>
+
+    Clean install of Manjaro on a supported hardware.
+  </h2>
+
+  <section>
+    <h2>Procedure</h2>
+
+    <p>Firstly we will install the mighty <pre>sbctl</pre> tool. This tool is aspiring to be the swiss knife for secure boot and in the future might well be the only one needed.</p>
+    <pre><code>pacman -S sbctl</code></pre>
+    <p>Then we can check the current status of secure boot.</p>
+    <pre><code>
+$ sbctl status
+Installed:   ✘ Sbctl is not installed
+Setup Mode:  ✔ Disabled
+Secure Boot: ✘ Disabled
+    </code></pre>
+    <p>Backup keys</p>
+    <pre><code>
+efi-readvar -v PK -o old_PK.esl 
+efi-readvar -v KEK -o old_KEK.esl 
+efi-readvar -v db -o old_db.esl 
+efi-readvar -v dbx -o old_dbx.esl
+    </code></pre>
+    <p>Create keys</p>
+    <pre><code>$ sbcl create-keys</code></pre>
+    <p>Sign firmware</p>
+    <pre><code>sbctl sign -s -o /usr/lib/systemd/boot/efi/...signed /usr/lib/systemd/boot/efi/...</code></pre>
+    <pre><code>sbctl verify</code></pre>
+    <p>Tool for automatic signing of versioned kernels <pre>sbupdate</pre>, need to install from AUR.</p>
+    <pre><code>yay install</code></pre>
+    <p>Set up the config file, location of splash images:
+      <ul>
+        <li>Manjaro - /usr/share/systemd/bootctl/splash-manjaro.bmp</li>
+        <li>Firmware vendor - /sys/firmware/acpi/bgrt/image</li>
+      </ul>
+    </p>
+    <pre><code>$ vim /etc/sbupdate.conf</code></pre>
+    <p>Change the suffix of certificate for sbupdate</p>
+    <pre><code>cp db.pem db.crt</code></p>
+    <p>Generate and sign the EFISTUB</p>
+    <pre><code>$ sbupdate</code></pre>
+  </section>
+
+  <section>
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://github.com/Foxboron/sbctl">https://github.com/Foxboron/sbctl</a> - Github page of sbctl tool</li>
+      <li><a href="https://lunaryorn.com/install-arch-with-secure-boot-tpm2-based-luks-encryption-and-systemd-homed">https://lunaryorn.com/install-arch-with-secure-boot-tpm2-based-luks-encryption-and-systemd-homed</a> - Arch Linux setup for Secure Boot and TPM2 unlocked disk encryption</li>
+      <li><a href="https://forum.manjaro.org/t/howto-using-secure-boot-and-tpm2-to-unlock-luks-partition-on-boot/101626">https://forum.manjaro.org/t/howto-using-secure-boot-and-tpm2-to-unlock-luks-partition-on-boot/101626</a> - Overcomplicated setup for Manjaro Secure Boot with shim and TPM2 unlocked disk encryption</li>
+      <li><a href="https://nwildner.com/posts/2020-07-04-secure-your-boot-process/">https://nwildner.com/posts/2020-07-04-secure-your-boot-process/</a> - Arch Linux setup for Secure Boot with bootable EFISTUB</li>
+      <li><a href="https://bbs.archlinux.org/viewtopic.php?id=265134">https://bbs.archlinux.org/viewtopic.php?id=265134</a> - Arch Linux forum describing unlocking root system with FIDO2 key</li>
+    </ul>
+  </section>
+</main>
